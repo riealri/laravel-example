@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use App\Http\Resources\TaskCollection;
+use App\Http\Resources\TaskResource;
+
 
 class TaskController extends Controller
 {
@@ -12,9 +15,12 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        
+        $request->validate([
+            'orderBy' => 'string|required'
+        ]);
+        return new TaskCollection(Task::orderBy('expire_at', $request->orderBy)->paginate());
     }
 
     /**
@@ -46,7 +52,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        return new TaskResource($task);
     }
 
     /**
